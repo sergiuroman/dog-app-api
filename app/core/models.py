@@ -1,8 +1,15 @@
 from django.db import models
+import uuid
+import os
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.conf import settings
 
+def dog_image_file_path(instance,filename):
+    """generate file path for new dog image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    return os.path.join('uploads/recipe/', filename)
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -49,6 +56,9 @@ class Dog(models.Model):
     size = models.CharField(max_length=255)
     age = models.CharField(max_length=255)
     purpose = models.CharField(max_length=255)
+    image = models.ImageField(null=True, upload_to=dog_image_file_path)
+    lat =models.CharField(max_length=255)
+    long=models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
